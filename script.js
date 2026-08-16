@@ -294,7 +294,7 @@ function viewRecords(val) {
   if(read.length === 0) {
     return loadBack();
   }
-dise += `<div class="recs" oncontextmenu="des('${dis.id}', true)" tabindex="0" id="${dis.id}" ontouchstart="dev('${dis.id}', true)" ontouchend="dev('${dis.id}', false)">${dis.rec.replace(/#+/g,"NGN").replace(/\$+/g,"NGN")}<br><br><b>Total</b>: NGN${dis.bal}<br><br><div class="time-dispe">${dis.time}</div></div><br><br>`
+dise += `<div class="recs" oncontextmenu="des('${dis.id}', true)" tabindex="0" id="${dis.id}">${dis.rec.replace(/#+/g,"NGN").replace(/\$+/g,"NGN")}<br><br><b>Total</b>: NGN${dis.bal}<br><br><div class="time-dispe">${dis.time}</div></div><br><br>`
     })
     document.getElementById("rec-dis").innerHTML = dise;
     document.getElementById(read[read.length - 1].id).focus()
@@ -344,17 +344,12 @@ msgBox("An error occured. Please try again.", "fail")
 function addToUser() {
     createNew()
     document.getElementById("inp-cus").value = pes;
-    document.getElementById("text-inpt").focus();
+    document.getElementById("text-inpt").focus()
 }
 
-function dev(dis, bool) {
+function des(dis, bool) {
     setTimeout(() => {
     thing = bool
     del(dis);
     }, 700)
-}
-
-function des(dis, bool) {
-    thing = bool
-    del(dis);
     }
