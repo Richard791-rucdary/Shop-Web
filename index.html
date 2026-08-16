@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Book</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="message-box"></div>
+    <h1>Credit Book</h1>
+    <div id="signup" class="hide">
+        <h2>Sign up</h2>
+ <p>Enter a 7-digit username</p>
+ <input type="text" id="user-inp" placeholder='example"$rich@0"'><br>
+ <small id="small"></small>
+ <p>Input your real/business name</p>
+ <input type="text" id="name-inp" placeholder="input your real/business name...">
+ <p>Enter a strong password</p>
+ <input type="password" id="pass-inp" placeholder="input a password..."><br><br>
+ <button onclick="signUp()" id="btn1">Sign up</button><br><br>
+ <a href="#" onclick="toLogin()">Back to log in</a>
+    </div>
+
+    <div id="login" class="hide">
+        <h2>Log In</h2>
+        <p>Enter username</p>
+        <input type="text" id="username" placeholder="input username...">
+       <p>Enter your password</p>
+        <input type="password" id="log-pass" placeholder="input password..."><br><br>
+        <button onclick="logIn()" id="btn2">Log in</button><br><br>
+        <a href="#" onclick="toSignup()">Back to sign up</a>
+    </div>
+
+    <div id="home" class="hide">
+        <h2 id="name-dis">****</h2>
+        <div id="debtors">
+            <div><span><b>Mr Man</b><br><small>Mr man with goods worth...</small></span><h1>🗑</h1></div><br>
+               </div>
+                <button id="create-new" onclick="createNew()" class="create-new">+</button>
+    </div>
+
+  <div id="reg-page" class="hide">
+    <button class="back" onclick="loadBack()">back</button>
+    <h2>Add Record</h2>
+  <input type="text" id="inp-cus" placeholder="input customer's name..." spellcheck="false">
+  <p>Input Record</p>
+  <textarea id="text-inpt" placeholder="input record..." oninput="calc()"></textarea>
+  <p>Total</p> 
+  <input type="number" id="num-inp" placeholder="Total price..."> <br><br>
+     <button onclick="add()" id="btn3">Add</button>
+  </div>
+
+  <div id="payments" class="hide">
+     <button class="back" onclick="loadBack()">back</button>
+<h2>Payment Plans</h2>
+<div id="plans">
+    <div tabindex="0"><b>NGN 274.99</b><br><small>1 week</small></div>
+     <div tabindex="0"><b>NGN 996.99</b><br><small>1 month</small></div>
+</div>
+  </div>
+  <div id="dis-page" class="hide">
+     <button class="back" onclick="loadBack()">back</button>
+  <h3 id="head"></h3>
+  <div id="rec-dis"></div>
+      <button id="create-nes" onclick="addToUser()" class="create-new">+</button>
+  </div>
+    <script src="script.js"></script>
+    
+</body>
+</html>
