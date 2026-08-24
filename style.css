@@ -20,7 +20,6 @@ button {
     border-radius: 8px;
     border: none;
     background: var(--bright);
-    font-weight: bold;
     position: relative;
 }
 h1, h2, h3 {
