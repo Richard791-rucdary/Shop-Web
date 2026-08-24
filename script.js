@@ -1,6 +1,6 @@
 let users = ""
 let pes = "";
-let resd = [];
+let resd = [["hippy", 0], ["angry", 0], ["hello", 1]];
 
 function view(content) {
     document.querySelectorAll('.hide').forEach(el => el.style.display = "none");
@@ -8,8 +8,11 @@ function view(content) {
     document.getElementById(content).style.display = "block";
 }
    const get = localStorage.getItem('SHDB-name');
+  
 window.onload = () => {
+     const params = new URLSearchParams(window.location.search).get("login")
       if(!get) return toSignup()
+        if (params === "yes") return toLogin();
            return toLogin()
 }
 
@@ -94,6 +97,7 @@ document.getElementById("btn2").disabled = false;
    } 
     sessionStorage.setItem("token", res.token)
      localStorage.setItem("SHDB-name", user.value);
+     localStorage.setItem("pesinName", res.realName);
     users = user.value
      loadBack()
 }catch(err) {
@@ -116,15 +120,30 @@ function calc() {
     const inp = document.getElementById("text-inpt");
     const dis = document.getElementById("num-inp");
     const val = inp.value;
-    let plus = val.match(/#\d+/g)
+    let plus = val.match(/\#\d+/g)
     let minus = val.match(/\$\d+/g)
+    let multiply = val.match(/\d+&\d+/g)
     let vake = 0
+
+     if (multiply && multiply.length > 0) {
+        multiply.map(ins => {
+            let one = parseInt(ins.split("&")[0])
+            let two = parseInt(ins.split("&")[1])
+            vake += one * two;
+        })
+    }
     if (plus && plus.length > 0) {
-   plus.map(ins => vake += parseInt(ins.replace("#", "")));
+for (const ins of plus) {
+    if(!/\d+#\d+/.test(ins)) {
+    vake += parseInt(ins.replace("#", ""))
+}
+}
     }
      if (minus && minus.length > 0) {
    minus.map(ins => vake -= parseInt(ins.replace("$", "")));
     }
+
+
     dis.value = vake
 }
 
@@ -139,11 +158,8 @@ function createNew() {
 async function loadData() {
     const get = sessionStorage.getItem("token");
     let disp = "";
- if(get.length !== 20) {
-    return msgBox("unable to authorise user.", "fail")
- }
+    
 document.getElementById("debtors").innerHTML = `<h1 class="spin">⌛</h1>`
-document.getElementById("name-dis").innerHTML = `Hello ${users}`;
  try {
       const fish = await fetch(`https://shopdb-rb5i.onrender.com/load`, {
         method: "POST",
@@ -165,14 +181,24 @@ document.getElementById("name-dis").innerHTML = `Hello ${users}`;
    }
    resd.length = 0;
    res.message.forEach(dis => {
-  if (!resd.includes(dis.name)) {
-  resd.push(dis.name)
+    let art = false
+    for (const dip of resd) {
+  if (dip[0] === dis.name) {
+    art = true;
   }
+    }
+    if(art === false) resd.push([dis.name, parseFloat(dis.actDate)] )
+   })
+   resd.sort((a,b) => {
+    if (a[1] > b[1]) return -1
+    if (b[1] > a[1]) return 1
+    return -1
    })
     resd.forEach(val => {
-    disp+= `<div onclick="viewRecords('${val}')"><span><b>${val}</b></span></div>`
+    disp+= `<div onclick="viewRecords('${val[0]}')"><span><b>${val[0]}</b></span></div>`
   })
   document.getElementById("debtors").innerHTML = disp
+  document.getElementById("name-dis").innerHTML = `Hello ${users}`;
   return true
 } catch(err){
      if(err.toString().toLowerCase().includes("failed to fetch")) {
@@ -206,7 +232,7 @@ async function add() {
             "useName": users,
             "name": cust.value.trim(),
             "date": curr,
-            "actDate": time,
+            "actDate": Date.now().toString(),
             "record": text.value.trim(),
             "owed": parseFloat(num.value.trim())
         })
@@ -294,7 +320,12 @@ function viewRecords(val) {
   if(read.length === 0) {
     return loadBack();
   }
-dise += `<div class="recs" oncontextmenu="des('${dis.id}', true)" tabindex="0" id="${dis.id}">${dis.rec.replace(/#+/g,"NGN").replace(/\$+/g,"NGN")}<br><br><b>Total</b>: NGN${dis.bal}<br><br><div class="time-dispe">${dis.time}</div></div><br><br>`
+  ert = dis.rec.replace(/#+/g,"NGN").replace(/\$+/g,"NGN");
+  vat = ert.match(/\d+\&\d+/g)
+vat.forEach(dis => {
+    ert = ert.replace(dis, "NGN"+eval(dis.replace("&", "*")))
+})
+dise += `<div class="recs" oncontextmenu="des('${dis.id}', true)" tabindex="0" id="${dis.id}">${ert}<br><br><b>Total</b>: NGN${dis.bal}<br><br><div class="time-dispe">${dis.time}</div></div><br><br>`
     })
     document.getElementById("rec-dis").innerHTML = dise;
     document.getElementById(read[read.length - 1].id).focus()
@@ -352,4 +383,21 @@ function des(dis, bool) {
     thing = bool
     del(dis);
     }, 700)
+    }
+    function check() {
+        const val = document.getElementById("search-inp").value;
+        let arr = []
+        let disp = "";
+        if(val === "") return loadData();
+        resd.forEach(dibs => {
+            if (dibs[0].toLowerCase().startsWith(val.toLowerCase())) {
+                arr.push(dibs[0])
+            }
+        })
+        arr.forEach(ins => {
+ disp+= `<div onclick="viewRecords('${ins}')"><span><b><b style="color: var(--bright); font-size: 20px;">${val}</b>${ins.toLowerCase().replace(val.toLowerCase(), "")}</b></span></div>`
+
+        })
+        disp = disp === "" ? "<h1 style=\"color:grey;\">No Match</h1>": disp;
+        document.getElementById("debtors").innerHTML = disp;
     }
