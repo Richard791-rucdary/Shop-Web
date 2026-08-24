@@ -322,9 +322,11 @@ function viewRecords(val) {
   }
   ert = dis.rec.replace(/#+/g,"NGN").replace(/\$+/g,"NGN");
   vat = ert.match(/\d+\&\d+/g)
+  if(vat) {
 vat.forEach(dis => {
     ert = ert.replace(dis, "NGN"+eval(dis.replace("&", "*")))
 })
+  }
 dise += `<div class="recs" oncontextmenu="des('${dis.id}', true)" tabindex="0" id="${dis.id}">${ert}<br><br><b>Total</b>: NGN${dis.bal}<br><br><div class="time-dispe">${dis.time}</div></div><br><br>`
     })
     document.getElementById("rec-dis").innerHTML = dise;
