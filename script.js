@@ -1,6 +1,6 @@
 let users = ""
 let pes = "";
-let resd = [["hippy", 0], ["angry", 0], ["hello", 1]];
+let resd = [];
 
 function view(content) {
     document.querySelectorAll('.hide').forEach(el => el.style.display = "none");
@@ -187,7 +187,7 @@ document.getElementById("debtors").innerHTML = `<h1 class="spin">⌛</h1>`
     art = true;
   }
     }
-    if(art === false) resd.push([dis.name, parseFloat(dis.actDate)] )
+    if(art === false) resd.push([dis.name, parseInt(dis.time)] )
    })
    resd.sort((a,b) => {
     if (a[1] > b[1]) return -1
@@ -232,9 +232,10 @@ async function add() {
             "useName": users,
             "name": cust.value.trim(),
             "date": curr,
-            "actDate": Date.now().toString(),
+            "actDate": time,
             "record": text.value.trim(),
-            "owed": parseFloat(num.value.trim())
+            "owed": parseFloat(num.value.trim()),
+            "time": Date.now().toString(),
         })
       })
    let rest = await fish.json() 
