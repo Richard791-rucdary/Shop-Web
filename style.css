@@ -181,3 +181,40 @@ textarea {
     color: black;
     font-weight: bold;
 }
+  .load1 {
+    border-radius: 64px; /*makes the container circular*/
+    border: none;
+    background-color: rgba(129, 125, 125, 0);
+    width: 80px;
+    height: 80px;
+    position: fixed;
+    left: 30%;
+    top: 30%;
+  }
+  .load1 span {
+ border-radius: 64px;
+ height: 50px;
+ width: 50px;
+ position: absolute;
+ margin: 6%;
+ border: 11px solid var(--bright);
+ border-bottom: 11px solid  rgba(129, 125, 125, 0);
+ animation: rot 2s infinite;
+  }
+  @keyframes rot {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+  }
+
+  #loaders {
+    width: 100%;
+    display: none;
+    height: 100vh;
+    background: rgba(129, 125, 125, 0.3);
+    position: fixed;
+    z-index: 1000;
+  }
