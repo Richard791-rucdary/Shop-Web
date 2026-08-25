@@ -1,5 +1,6 @@
 let users = ""
 let pes = "";
+let myname = "";
 let resd = [];
 
 function view(content) {
@@ -11,7 +12,7 @@ function view(content) {
   
 window.onload = () => {
      const params = new URLSearchParams(window.location.search).get("login")
-      if(!get) return toSignup()
+      if(!get && params === "") return toSignup()
         if (params === "yes") return toLogin();
            return toLogin()
 }
@@ -39,8 +40,7 @@ async function signUp() {
     if(!userInp.value || userInp.value.length !== 7) return msgBox("Input a seven digit username", "fail")
     if(!nameInp.value) return msgBox("Input a name", "fail")
     if(!passInp.value) return msgBox("Input a password", "fail")
-    document.getElementById("btn1").innerHTML = "<span class='spin'>⌛</span>"
-document.getElementById("btn1").disabled = true;
+   on()
 try {
    const fish = await fetch("https://shopdb-rb5i.onrender.com/signup", {
     method: "POST",
@@ -53,22 +53,18 @@ try {
    })
    const res = await fish.json()
    if(!res.message) {
-     document.getElementById("btn1").innerHTML = "Sign up"
-document.getElementById("btn1").disabled = false;
+   off()
     return msgBox(res.err, "fail")
    }
    view("login")
-    localStorage.setItem("SHDB-name", userInp.value);
-     document.getElementById("btn1").innerHTML = "Sign up"
-document.getElementById("btn1").disabled = false;
+    off()
 } catch(err) {
    if(err.toString().toLowerCase().includes("failed to fetch")) {
  msgBox("We can't connect to our servers. try connecting to a stronger Wifi network", "fail")
     } else {
 msgBox("An error occured. Please try again.", "fail")
     }
-       document.getElementById("btn1").innerHTML = "Sign up"
-document.getElementById("btn1").disabled = false;
+       off()
     
 }
 }
@@ -78,8 +74,7 @@ async function logIn() {
    const pass = document.getElementById("log-pass")
    if (!user.value) return msgBox("Invalid User name!", "fail")
     if (!pass.value) return msgBox("Enter a password", "fail")
-        document.getElementById("btn2").innerHTML = '<span class="spin">⌛</span>'
-document.getElementById("btn2").disabled = true;
+    on()
 try {
       const fish = await fetch("https://shopdb-rb5i.onrender.com/login", {
     method: "POST",
@@ -91,14 +86,14 @@ try {
    })
    const res = await fish.json()
    if(!res.token) {
-     document.getElementById("btn2").innerHTML = "Log in"
-document.getElementById("btn2").disabled = false;
+   off()
     return msgBox(res.err, "fail")
    } 
     sessionStorage.setItem("token", res.token)
      localStorage.setItem("SHDB-name", user.value);
      localStorage.setItem("pesinName", res.realName);
     users = user.value
+    myname = res.name
      loadBack()
 }catch(err) {
     if(err.toString().toLowerCase().includes("failed to fetch")) {
@@ -106,8 +101,7 @@ document.getElementById("btn2").disabled = false;
     } else {
 msgBox("An error occured. Please try again.", "fail")
     }
-   document.getElementById("btn2").innerHTML = "Log in"
-document.getElementById("btn2").disabled = false;
+  off()
    }
 }
 
@@ -159,7 +153,7 @@ async function loadData() {
     const get = sessionStorage.getItem("token");
     let disp = "";
     
-document.getElementById("debtors").innerHTML = `<h1 class="spin">⌛</h1>`
+on()
  try {
       const fish = await fetch(`https://shopdb-rb5i.onrender.com/load`, {
         method: "POST",
@@ -172,6 +166,7 @@ document.getElementById("debtors").innerHTML = `<h1 class="spin">⌛</h1>`
    let rest = await fish.json() 
    if(rest.err) {
      return msgBox(rest.err, "fail")
+     off()
      return false
    }
    res = rest;
@@ -180,6 +175,11 @@ document.getElementById("debtors").innerHTML = `<h1 class="spin">⌛</h1>`
    return document.getElementById("debtors").innerHTML = `<h1 style="color:grey;">No Records</h1>`
    }
    resd.length = 0;
+   res.message.sort((a,b) => {
+    if(parseInt(a.time) > parseInt(b.time)) return -1
+     if(parseInt(b.time) > parseInt(a.time)) return 1
+     return 1
+   })
    res.message.forEach(dis => {
     let art = false
     for (const dip of resd) {
@@ -198,14 +198,17 @@ document.getElementById("debtors").innerHTML = `<h1 class="spin">⌛</h1>`
     disp+= `<div onclick="viewRecords('${val[0]}')"><span><b>${val[0]}</b></span></div>`
   })
   document.getElementById("debtors").innerHTML = disp
-  document.getElementById("name-dis").innerHTML = `Hello ${users}`;
+  document.getElementById("name-dis").innerHTML = `Hello ${myname}`;
+  off()
   return true
 } catch(err){
      if(err.toString().toLowerCase().includes("failed to fetch")) {
   document.getElementById("debtors").innerHTML="<br><b><h2>Poor internet connection!</h2>We can't connect to our servers. try connecting to a stronger Wifi network</b><br><br><button onclick='loadData()'>Retry</button><br><br>"
+  off()
   } else {
  document.getElementById("debtors").innerHTML = "There was an error while carrying out your request! Please try again.<br><br><button onclick='loadData()'>Retry</button><br><br>"
-    }
+ off( ) 
+}
    return false
 }
 }
@@ -222,8 +225,7 @@ async function add() {
     if(cust.value.trim()) {
         if(text.value.trim()) {
             if (num.value.trim()) {
-                document.getElementById("btn3").innerHTML = '<span class="spin">⌛</span>'
-                 document.getElementById("btn3").disabled = true
+               on()
      try {
           const fish = await fetch(`https://shopdb-rb5i.onrender.com/save?token=${get}`, {
         method: "POST",
@@ -240,13 +242,11 @@ async function add() {
       })
    let rest = await fish.json() 
    if(rest.err) {
-    document.getElementById("btn3").innerHTML = 'Add'
-      document.getElementById("btn3").disabled = false
+   off()
      return msgBox(rest.err, "fail")
    }
    msgBox(rest.message, "success");
-    document.getElementById("btn3").innerHTML = 'Add'
-      document.getElementById("btn3").disabled = false
+  off()
       if (rest.message) {
         document.querySelectorAll("#reg-page input,#reg-page textarea").forEach(disp => {
         disp.value = "";
@@ -258,8 +258,7 @@ async function add() {
     } else {
 msgBox("An error occured. Please try again.", "fail")
     }
-          document.getElementById("btn3").innerHTML = 'Add'
-            document.getElementById("btn3").disabled = false
+         off()
      }
             } else {
                 msgBox("Input a total amount!", "fail")
@@ -403,4 +402,12 @@ function des(dis, bool) {
         })
         disp = disp === "" ? "<h1 style=\"color:grey;\">No Match</h1>": disp;
         document.getElementById("debtors").innerHTML = disp;
+    }
+
+    function off() {
+        document.getElementById("loaders").style.display = "none"
+    }
+
+    function on() {
+        document.getElementById("loaders").style.display = "block"
     }
