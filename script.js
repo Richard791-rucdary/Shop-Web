@@ -165,13 +165,14 @@ on()
       })
    let rest = await fish.json() 
    if(rest.err) {
-     return msgBox(rest.err, "fail")
      off()
+     return msgBox(rest.err, "fail")
      return false
    }
    res = rest;
    localStorage.setItem("test", res);
    if(res.message === null) {
+    off()
    return document.getElementById("debtors").innerHTML = `<h1 style="color:grey;">No Records</h1>`
    }
    resd.length = 0;
