@@ -2,7 +2,7 @@
     --norm: antiquewhite;
     --bright: rgb(177, 6, 6);
 }
-
+  
 .hide {
     display: none;
 }
@@ -188,7 +188,7 @@ textarea {
     width: 80px;
     height: 80px;
     position: fixed;
-    left: 30%;
+    left: 40%;
     top: 30%;
   }
   .load1 span {
@@ -217,4 +217,69 @@ textarea {
     background: rgba(129, 125, 125, 0.3);
     position: fixed;
     z-index: 1000;
+  }
+  .OTP {
+    width: 50px;
+    height: 50px;
+  }
+  #otp-dis {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #har {
+    width: 250px;
+    height: 200px;
+  }
+  #error-b {
+    font-size: 120px;
+    color: var(--bright);
+    font-family: roboto, Georgia, 'Times New Roman', Times, serif;
+  }
+
+  
+ @media only screen and (min-width: 1025px) {
+     .load1 {
+    border-radius: 64px; /*makes the container circular*/
+    border: none;
+    background-color: rgba(129, 125, 125, 0);
+    width: 180px;
+    height: 150px;
+    position: fixed;
+    left: 45%;
+    top: 30%;
+  }
+  .load1 span {
+ border-radius: 64px;
+ height: 90px;
+ width: 90px;
+ position: absolute;
+ margin: 6%;
+ border: 11px solid var(--bright);
+ border-bottom: 11px solid  rgba(129, 125, 125, 0);
+ animation: rot 2s infinite;
+  }
+
+  input {
+    width: 270px;
+    height: 35px;
+    border-radius: 8px;
+}
+button {
+    color: white;
+    font-weight: bold;
+    width: 260px;
+    height: 25px;
+    border-radius: 8px;
+    border: none;
+    background: var(--bright);
+}
+input:hover, textarea:hover {
+    background: rgb(212, 207, 207);
+}
+button:hover {
+    background: rgb(122, 9, 9);
+    width: 270px;
+    height: 30px;
+ }
   }
