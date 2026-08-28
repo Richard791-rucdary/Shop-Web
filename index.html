@@ -12,8 +12,8 @@
     <h1>Jotter</h1>
     <div id="signup" class="hide">
         <h2>Sign up</h2>
- <p>Enter a 7-digit username</p>
- <input type="text" id="user-inp" placeholder='example"$rich@0"'><br>
+ <p>Enter your e-mail</p>
+ <input type="email" id="user-inp" placeholder='Example: "badgcheets@gmail.com"'><br>
  <small id="small"></small>
  <p>Input your real/business name</p>
  <input type="text" id="name-inp" placeholder="input your real/business name...">
@@ -22,11 +22,15 @@
  <button onclick="signUp()" id="btn1">Sign up</button><br><br>
  <a href="#" onclick="toLogin()">Back to log in</a>
     </div>
-
+    <div id="OTP" class="hide">
+      <h1>OTP</h1>
+      <div id="mes-dis"></div><br><br>
+      <div id="otp-dis"></div>
+    </div>
     <div id="login" class="hide">
         <h2>Log In</h2>
-        <p>Enter username</p>
-        <input type="text" id="username" placeholder="input username...">
+        <p>Enter your e-mail</p>
+        <input type="email" id="username" placeholder="input email...">
        <p>Enter your password</p>
         <input type="password" id="log-pass" placeholder="input password..."><br><br>
         <button onclick="logIn()" id="btn2">Log in</button><br><br>
