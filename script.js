@@ -2,6 +2,22 @@ let users = ""
 let pes = "";
 let myname = "";
 let resd = [];
+let msgArr = [];
+const request = indexedDB.open("shopData", 1)
+let db;
+
+request.onupgradeneeded = (e) => {
+db = e.target.result;
+db.createObjectStore("ShopDB", { "keyPath": 'id' })
+}
+request.onsuccess = (e) => {
+    db = e.target.result;
+   const tr = db.transaction("ShopDB", "readwrite")
+   const store = tr.objectStore("ShopDB")
+   store.put({id: 1, val:"helo"})
+   const gets = store.get(1)
+   gets.onsuccess = () => off()
+}
 
 function view(content) {
     document.querySelectorAll('.hide').forEach(el => el.style.display = "none");
@@ -12,8 +28,8 @@ function view(content) {
   
 window.onload = () => {
      const params = new URLSearchParams(window.location.search).get("login")
-      if(!get && params === "") return toSignup()
         if (params === "yes") return toLogin();
+      if(!get) return toSignup()
            return toLogin()
 }
 
@@ -37,7 +53,8 @@ async function signUp() {
     const userInp = document.getElementById("user-inp")
     const nameInp = document.getElementById("name-inp")
     const passInp = document.getElementById("pass-inp")
-    if(!userInp.value || userInp.value.length !== 7) return msgBox("Input a seven digit username", "fail")
+    const email = /^\w+@\w+\.\w+\.?\w+?/
+    if(!email.test(userInp.value)) return msgBox("Input a valid email", "fail")
     if(!nameInp.value) return msgBox("Input a name", "fail")
     if(!passInp.value) return msgBox("Input a password", "fail")
    on()
@@ -46,7 +63,7 @@ try {
     method: "POST",
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify({
-        "user":userInp.value,
+        "user": userInp.value,
         "name": nameInp.value,
         "password": passInp.value,
     })
@@ -56,11 +73,13 @@ try {
    off()
     return msgBox(res.err, "fail")
    }
-   view("login")
     off()
+    if(res.message !== "success" ) return  msgBox(res.message, "fail")
+   formOTP(userInp.value)
+   users = userInp.value
 } catch(err) {
    if(err.toString().toLowerCase().includes("failed to fetch")) {
- msgBox("We can't connect to our servers. try connecting to a stronger Wifi network", "fail")
+ msgBox("We can't connect to our servers. Please check your internet connection.", "fail")
     } else {
 msgBox("An error occured. Please try again.", "fail")
     }
@@ -97,7 +116,7 @@ try {
      loadBack()
 }catch(err) {
     if(err.toString().toLowerCase().includes("failed to fetch")) {
- msgBox("We can't connect to our servers. try connecting to a stronger Wifi network", "fail")
+ msgBox("We can't connect to our servers. Please check your internet connection.", "fail")
     } else {
 msgBox("An error occured. Please try again.", "fail")
     }
@@ -166,11 +185,12 @@ on()
    let rest = await fish.json() 
    if(rest.err) {
      off()
-     return msgBox(rest.err, "fail")
+     document.getElementById("debtors").innerHTML = `<b id="error-b">!</b><p><b>${rest.err}</b><br><br><button onclick='loadData()'>Retry</button></p>`
      return false
    }
    res = rest;
    localStorage.setItem("test", res);
+    document.getElementById("name-dis").innerHTML = `Hello ${myname}`;
    if(res.message === null) {
     off()
    return document.getElementById("debtors").innerHTML = `<h1 style="color:grey;">No Records</h1>`
@@ -196,18 +216,24 @@ on()
     return -1
    })
     resd.forEach(val => {
-    disp+= `<div onclick="viewRecords('${val[0]}')"><span><b>${val[0]}</b></span></div>`
+        let total = 0;
+        res.message.forEach(dis => {
+            if(val[0] === dis.name) {
+          total += parseInt(dis.owed);
+            }
+        })
+    disp+= `<div onclick="viewRecords('${val[0]}')"><span><b>${val[0]}</b></span><span><small>NGN${total.toLocaleString()}</small></span></div>`
   })
   document.getElementById("debtors").innerHTML = disp
-  document.getElementById("name-dis").innerHTML = `Hello ${myname}`;
   off()
   return true
 } catch(err){
      if(err.toString().toLowerCase().includes("failed to fetch")) {
-  document.getElementById("debtors").innerHTML="<br><b><h2>Poor internet connection!</h2>We can't connect to our servers. try connecting to a stronger Wifi network</b><br><br><button onclick='loadData()'>Retry</button><br><br>"
+        if(resd.length === 0) return
+  document.getElementById("debtors").innerHTML="<img src=\"Wifi-down.png\" alt=\"wifi\" id=\"har\"><br><b>We can't connect to our servers. try connecting to a stronger Wifi network</b><br><br><button onclick='loadData()'>Retry</button><br><br>"
   off()
   } else {
- document.getElementById("debtors").innerHTML = "There was an error while carrying out your request! Please try again.<br><br><button onclick='loadData()'>Retry</button><br><br>"
+ document.getElementById("debtors").innerHTML = "<b id=\"error-b\">!</b>There was an error while carrying out your request! Please try again.<br><br><button onclick='loadData()'>Retry</button><br><br>"
  off( ) 
 }
    return false
@@ -255,7 +281,7 @@ async function add() {
     }
      } catch(err) {
        if(err.toString().toLowerCase().includes("failed to fetch")) {
- msgBox("We can't connect to our servers. try connecting to a stronger Wifi network", "fail")
+ msgBox("We can't connect to our servers. Please check your internet connection.", "fail")
     } else {
 msgBox("An error occured. Please try again.", "fail")
     }
@@ -277,6 +303,10 @@ msgBox("An error occured. Please try again.", "fail")
 
 function msgBox(value, col) {
     const msg = document.getElementById("message-box");
+    if(msg.style.display === "block") {
+        msgArr.push({value, col})
+        return
+    }
     msg.style.display = "block";
      msg.classList.add("show")
     setTimeout(() => {
@@ -295,6 +325,10 @@ msg.style.color = "black";
         setTimeout(() => {
  msg.style.display = "none";
   msg.classList.remove("close")
+  if(msgArr.length > 0) {
+    msgBox(msgArr[0].value, msgArr[0].col)
+    msgArr.shift();
+  }
         }, 1000)
     }, 2000)
     }, 1000)
@@ -360,7 +394,7 @@ async function del(val) {
     } catch(err) {
         thing = false;
     if(err.toString().toLowerCase().includes("failed to fetch")) {
- msgBox("We can't connect to our servers. try connecting to a stronger Wifi network", "fail")
+        msgBox("We can't connect to our servers. Please check your internet connection.", "fail")
     } else if(err.toString().toLowerCase().includes("undefined")) {
         msgBox("Success", "success")
         loadBack()
@@ -398,7 +432,13 @@ function des(dis, bool) {
             }
         })
         arr.forEach(ins => {
- disp+= `<div onclick="viewRecords('${ins}')"><span><b><b style="color: var(--bright); font-size: 20px;">${val}</b>${ins.toLowerCase().replace(val.toLowerCase(), "")}</b></span></div>`
+             let total = 0;
+        res.message.forEach(dis => {
+            if(ins === dis.name) {
+          total += parseInt(dis.owed);
+            }
+        })
+ disp+= `<div onclick="viewRecords('${ins}')"><span><b><b style="color: var(--bright); font-size: 20px;">${val}</b>${ins.toLowerCase().replace(val.toLowerCase(), "")}</b></span><small>NGN${total.toLocaleString()}</small><span></span></div>`
 
         })
         disp = disp === "" ? "<h1 style=\"color:grey;\">No Match</h1>": disp;
@@ -411,4 +451,83 @@ function des(dis, bool) {
 
     function on() {
         document.getElementById("loaders").style.display = "block"
+    }
+     function types(val) {
+    const valp = document.getElementById(`input-${val}`).value
+    document.getElementById(`input-${val}`).length = 1;
+    if(valp !== "" && val !== "5") {
+    if(parseInt(val) <= 4) {
+          document.getElementById(`input-${parseInt(val)+1}`).focus();
+    }
+    }
+    if(val === "5") {
+        goCode()
+    }
+    }
+
+    function formOTP(val) {
+        view("OTP")
+        let inp = ""
+        document.getElementById("mes-dis").innerHTML= `We sent an OTP to <b style="color: red;">${val}</b> Input the OTP in the input below`
+        for(let i = 0; i < 6; i++) {
+            inp += `<input type="number" class="OTP" id="input-${i}" oninput="types('${i}')" maxlength="1">`
+        }
+         document.getElementById("otp-dis").innerHTML= inp
+           document.querySelectorAll("#otp-dis input").forEach((val, id) => {
+        val.addEventListener("keydown", (e) => runsAm(e, id))
+    })
+    }
+
+    function runsAm(e, id) {
+        const val = document.getElementById(`input-${id}`).value
+        if(e.key.toString().toLowerCase() === "backspace" && val === "" && id !== 0) {
+       document.getElementById(`input-${id-1}`).focus();
+        }
+        if(val !== "" && e.key.toString().toLowerCase() !== "backspace") {
+            document.getElementById(`input-${id}`).value = ""
+        }
+    }
+
+  async  function goCode() {
+        let val = "";
+        document.querySelectorAll("#otp-dis input").forEach(dis => {
+            val += dis.value 
+        })
+      if(val.length !== 6) return 
+      try{
+        on()
+      const fish = await fetch("https://shopdb-rb5i.onrender.com/conf", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "email": users,
+            "otp": val,
+        })
+      })
+      
+   const res = await fish.json()
+   if(!res.message) {
+   off()
+   if(res.err.toLowerCase === "invalid otp") {
+      document.querySelectorAll("#otp-dis input").forEach(dis => {
+            dis.value = "";
+        })
+   }
+    return msgBox(res.err, "fail")
+   } 
+ msgBox(res.message, "success")
+ localStorage.setItem("SHDB-name", users)
+ document.getElementById("username").value = users;
+  off()
+   return toLogin()
+}catch(err) {
+    if(err.toString().toLowerCase().includes("failed to fetch")) {
+        msgBox("We can't connect to our servers. Please check your internet connection.", "fail")
+    } else {
+msgBox("An error occured. Please try again.", "fail")
+    }
+  off()
+   }
     }
