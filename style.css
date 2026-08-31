@@ -26,7 +26,7 @@ h1, h2, h3 {
     color: var(--bright);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
-#signup, #login, #homes, #reg-page {
+#signup, #login, #homes, #reg-page, #edit-rec {
     text-align: center;
 }
 #debtors div, #users-dis div {
@@ -61,7 +61,19 @@ h1, h2, h3 {
     height: 30px;
     border-radius: 8px;
     border: none;
-    background-color: var(--norm);
+    background-color: rgb(184, 180, 175);
+    box-shadow: 0 0 10px;
+    position: fixed;
+    top: 11%;
+    left: 3%;
+    z-index: 500;
+}
+.back:hover {
+     width: 85px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    background-color: rgb(222, 213, 200);
     box-shadow: 0 0 10px;
 }
 
@@ -76,6 +88,7 @@ h1, h2, h3 {
     top: 70%;
     left: 75%;
     box-shadow: 0 0 10px;
+    z-index: 100;
 }
 #create-nes {
 left: 10%;
@@ -130,6 +143,7 @@ textarea {
     box-shadow: 0 0 10px;
     display: none;
      text-align: center;
+     z-index: 1000;
 }
 .show {
     animation: showup 1s;
@@ -158,7 +172,7 @@ textarea {
 }
   
 
-.recs {
+.recs, .ids {
     width: 190px;
     background-color: var(--bright);
     color: white;
@@ -170,6 +184,27 @@ textarea {
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
+.ids {
+ background: var(--norm);
+ color: black;
+}
+#vevs, #vevs div {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+#vevs {
+    display: none;
+    position: fixed;
+    background: var(--norm);
+    width: 95%;
+    z-index: 700;
+}
+
+#wid {
+width: 150px;
+}
+
 .time-dispe {
     color: grey;
       width: 190px;
@@ -190,6 +225,7 @@ textarea {
     position: fixed;
     left: 40%;
     top: 30%;
+    z-index: 900;
   }
   .load1 span {
  border-radius: 64px;
@@ -216,7 +252,7 @@ textarea {
     height: 100vh;
     background: rgba(129, 125, 125, 0.3);
     position: fixed;
-    z-index: 1000;
+    z-index: 850;
   }
   .OTP {
     width: 50px;
@@ -282,4 +318,30 @@ button:hover {
     width: 270px;
     height: 30px;
  }
+ 
+.recs, .ids {
+    width: 250px;
+    background-color: var(--bright);
+    color: white;
+    border-radius: 8px;
+    min-height: 100px;
+    margin: 0px 75%;
+    padding: 5px;
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.create-new:hover {
+    background-color:  rgb(98, 7, 7);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 64px;
+    border: none;
+    position: fixed;
+    top: 70%;
+    left: 75%;
+    box-shadow: 0 0 10px;
+}
   }
