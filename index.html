@@ -12,8 +12,8 @@
     <h1>Jotter</h1>
     <div id="signup" class="hide">
         <h2>Sign up</h2>
- <p>Enter your e-mail</p>
- <input type="email" id="user-inp" placeholder='Example: "badgcheets@gmail.com"'><br>
+ <p>Input a 7-digit username</p>
+ <input type="text" id="user-inp" placeholder='Example: "$richy0"' maxlength="7"><br>
  <small id="small"></small>
  <p>Input your real/business name</p>
  <input type="text" id="name-inp" placeholder="input your real/business name...">
@@ -29,8 +29,8 @@
     </div>
     <div id="login" class="hide">
         <h2>Log In</h2>
-        <p>Enter your e-mail</p>
-        <input type="email" id="username" placeholder="input email...">
+        <p>Enter your 7-digit username</p>
+        <input type="text" id="username" placeholder="input email...">
        <p>Enter your password</p>
         <input type="password" id="log-pass" placeholder="input password..."><br><br>
         <button onclick="logIn()" id="btn2">Log in</button><br><br>
@@ -50,7 +50,7 @@
     <h2>Add Record</h2>
   <input type="text" id="inp-cus" placeholder="input customer's name..." spellcheck="false">
   <p>Input Record</p>
-  <textarea id="text-inpt" placeholder="input record..." oninput="calc()"></textarea>
+  <textarea id="text-inpt" placeholder="input record..." oninput="calc('a')"></textarea>
   <p>Total</p> 
   <input type="number" id="num-inp" placeholder="Total price..."> <br><br>
      <button onclick="add()" id="btn3">Add</button>
@@ -65,10 +65,29 @@
 </div>
   </div>
   <div id="dis-page" class="hide">
-     <button class="back" onclick="loadBack()">back</button>
-  <h3 id="head"></h3>
+     <button class="back" onclick="loadBack()" id="backe">back</button>
+     <div id="vevs">
+      <b onclick="closer('cancel')">❌<br><small>Cancel</small></b>
+      <div id="wid">
+      <b onclick="closer('pen')">🖊<br><small>Edit</small></b>
+      <b onclick="closer('trash')">🗑<br><small>Delete</small></b>
+      </div>
+    </div>
+  <h3 id="head">****</h3>
   <div id="rec-dis"></div>
-      <button id="create-nes" onclick="addToUser()" class="create-new">+</button>
+   <button id="create-nes" onclick="addToUser()" class="create-new">+</button>
+  </div>
+
+  <div id="edit-rec" class="hide">
+    <button class="back" onclick="view('dis-page')">back</button>
+    <h2>Edit Record</h2>
+    <p>Record ID</p>
+    <input type="text" id="rec-id" readonly>
+    <p>Edit record</p>
+    <textarea id="edit-text" oninput="calc('b')"></textarea>
+    <p>Total</p>
+    <input type="number" id="edit-tot"><br><br>
+    <button onclick="updateMsg()">Save changes</button>
   </div>
     <script src="script.js"></script>
     
