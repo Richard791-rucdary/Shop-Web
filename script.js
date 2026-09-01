@@ -390,7 +390,7 @@ async function del(val) {
         const reste = await fish.json();
         if(reste.err) return msgBox(reste.err, "fail")
            let ert = await loadData()
-            if(res.message === null) loadBack()
+            if(rese.message === null) loadBack()
         viewRecords(pes)
        return msgBox(reste.message, "success")
     } catch(err) {
