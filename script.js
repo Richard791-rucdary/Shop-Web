@@ -62,8 +62,10 @@ try {
     return msgBox(res.err, "fail")
    }
     off()
+    users = userInp.value
+     localStorage.setItem("SHDB-name", users)
    toLogin()
-   users = userInp.value
+    document.getElementById("username").value = users;
 } catch(err) {
    if(err.toString().toLowerCase().includes("failed to fetch")) {
  msgBox("We can't connect to our servers. Please check your internet connection.", "fail")
@@ -78,7 +80,7 @@ msgBox("An error occured. Please try again.", "fail")
 async function logIn() {
    const user = document.getElementById("username")
    const pass = document.getElementById("log-pass")
-   if (!user.value) return msgBox("Invalid User name!", "fail")
+   if (!user.value || user.value.length !== 7) return msgBox("Invalid User name!", "fail")
     if (!pass.value) return msgBox("Enter a password", "fail")
     on()
 try {
@@ -360,11 +362,11 @@ function viewRecords(val) {
   vat = ert.match(/\d+\&\d+/g)
   if(vat) {
 vat.forEach(dis => {
-    ert = ert.replace(dis, "NGN"+eval(dis.replace("&", "*")))
+    ert = ert.replace(dis, "NGN"+eval(dis.replace("&", "*")).toLocaleString())
 })
   }
-  classe = isNaN(dis.id) ? "recs" : "ids";
-dise += `<div class="${classe}" oncontextmenu="showOpt('${dis.id}')" tabindex="0" id="${dis.id}">${ert}<br><br><b>Total</b>: NGN${dis.bal}<br><br><div class="time-dispe">${dis.time}</div></div><br><br>`
+  classe = parseInt(dis.bal) >= 0 ? "recs" : "ids";
+dise += `<div class="${classe}" oncontextmenu="showOpt('${dis.id}')" tabindex="0" id="${dis.id}">${ert}<br><br><b>Total</b>: NGN${dis.bal.toLocaleString().replace("-", "")}<br><br><div class="time-dispe">${dis.time}</div></div><br><br>`
     })
     document.getElementById("rec-dis").innerHTML = dise;
     document.getElementById(read[read.length - 1].id).focus()
