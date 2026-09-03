@@ -199,6 +199,7 @@ textarea {
     background: var(--norm);
     width: 95%;
     z-index: 700;
+    top: 0%;
 }
 
 #wid {
