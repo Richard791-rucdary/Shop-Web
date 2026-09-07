@@ -18,7 +18,7 @@ function view(content) {
 window.onload = () => {
      const params = new URLSearchParams(window.location.search).get("login")
         if (params === "yes") return toLogin();
-      if(!get) return toSignup()
+      if(params === "no") return toSignup()
            return toLogin()
 }
 
@@ -115,6 +115,8 @@ msgBox("An error occured. Please try again.", "fail")
 
 function loadBack() {
    ert = loadData();
+   document.getElementById("search-inp").value = ""
+   pes = ""
 return view("home")
 }
 
@@ -219,7 +221,7 @@ on()
           total += parseInt(dis.owed);
             }
         })
-    disp+= `<div onclick="viewRecords('${val[0]}')"><span><b>${val[0]}</b></span><span><small>NGN${total.toLocaleString()}</small></span></div>`
+    disp+= `<div onclick="viewRecords('${val[0]}')"><span><b>${val[0]}</b></span><span><small style="color: ${total > 0 ? "green" : total < 0 ? "red" : "black"}; background:  rgb(253, 246, 167); border-radius: 10px; border: none; height: 30px; width: 40px; font-weight: bold;">₦${total.toLocaleString().replace("-", "")}</small></span></div>`
   })
   document.getElementById("debtors").innerHTML = disp
   off()
@@ -229,6 +231,17 @@ on()
         if(resd.length > 0) {
             off()
             msgBox("Failed to update records. Please check your internet", "fail")
+              resd.forEach(val => {
+        let total = 0;
+        rese.message.forEach(dis => {
+            if(val[0] === dis.name) {
+          total += parseInt(dis.owed);
+            }
+        })
+    disp+= `<div onclick="viewRecords('${val[0]}')"><span><b>${val[0]}</b></span><span><small style="color: ${total > 0 ? "green" : total < 0 ? "red" : "black"}; background:  rgb(253, 246, 167); border-radius: 10px; border: none; height: 30px; width: 40px; font-weight: bold;">₦${total.toLocaleString().replace("-", "")}</small></span></div>`
+ })
+  document.getElementById("debtors").innerHTML = disp
+  off()
  return
         }
   document.getElementById("debtors").innerHTML="<img src=\"Wifi-down.png\" alt=\"wifi\" id=\"har\"><br><b>We can't connect to our servers. try connecting to a stronger Wifi network</b><br><br><button onclick='loadData()'>Retry</button><br><br>"
@@ -283,6 +296,9 @@ async function add() {
         disp.value = "";
       });
     }
+      if (pes === "") return
+      await loadData()
+        viewRecords(pes)
      } catch(err) {
        if(err.toString().toLowerCase().includes("failed to fetch")) {
  msgBox("We can't connect to our servers. Please check your connection.", "fail")
@@ -358,15 +374,15 @@ function viewRecords(val) {
     dise += `<div class="date-dis">${dates}</div><br>`
   }
  
-  ert = dis.rec.replace(/#+/g,"NGN").replace(/\$+/g,"NGN");
+  ert = dis.rec.replace(/#+/g,"₦").replace(/\$+/g,"₦");
   vat = ert.match(/\d+\&\d+/g)
   if(vat) {
 vat.forEach(dis => {
-    ert = ert.replace(dis, "NGN"+eval(dis.replace("&", "*")).toLocaleString())
+    ert = ert.replace(dis, "₦"+eval(dis.replace("&", "*")).toLocaleString())
 })
   }
   classe = parseInt(dis.bal) >= 0 ? "recs" : "ids";
-dise += `<div class="${classe}" oncontextmenu="showOpt('${dis.id}')" tabindex="0" id="${dis.id}">${ert}<br><br><b>Total</b>: NGN${dis.bal.toLocaleString().replace("-", "")}<br><br><div class="time-dispe">${dis.time}</div></div><br><br>`
+dise += `<div class="${classe}" oncontextmenu="showOpt('${dis.id}')" tabindex="0" id="${dis.id}">${ert}<br><br><b>Total</b>: ₦${dis.bal.toLocaleString().replace("-", "")}<br><br><div class="time-dispe">${dis.time}</div></div><br><br>`
     })
     document.getElementById("rec-dis").innerHTML = dise;
     document.getElementById(read[read.length - 1].id).focus()
@@ -433,7 +449,7 @@ function addToUser() {
           total += parseInt(dis.owed);
             }
         })
- disp+= `<div onclick="viewRecords('${ins}')"><span><b><b style="color: var(--bright); font-size: 20px;">${val}</b>${ins.toLowerCase().replace(val.toLowerCase(), "")}</b></span><small>NGN${total.toLocaleString()}</small><span></span></div>`
+ disp+= `<div onclick="viewRecords('${ins}')"><span><b><b style="color: var(--bright); font-size: 20px;">${val}</b>${ins.toLowerCase().replace(val.toLowerCase(), "")}</b></span><span><small style="color: ${total > 0 ? "green" : total < 0 ? "red" : "black"}; background:  rgb(253, 246, 167); border-radius: 10px; border: none; height: 30px; width: 40px; font-weight: bold;">₦${total.toLocaleString().replace("-", "")}</small></span></div>`
 
         })
         disp = disp === "" ? "<h1 style=\"color:grey;\">No Match</h1>": disp;
@@ -586,8 +602,8 @@ function showOpt(ide) {
     document.getElementById("vevs").style.display = "flex"
      document.getElementById("backe").style.display = "none"
      id = ide
-}
-
+    doStuff(ide)
+    }
 function closer(value) {
   if(value === "cancel") {
       document.getElementById("vevs").style.display = "none"
@@ -604,4 +620,18 @@ function closer(value) {
      del(id)
        id = ""
    }
+   doStuff("")
+}
+
+function doStuff(msg) {
+     document.querySelectorAll(".recs").forEach(dis => {
+        dis.style.background = "var(--bright)";
+     })
+      document.querySelectorAll(".ids").forEach(dis => {
+        dis.style.background = "var(--norm)";
+     })
+     if(msg === "") return
+     const val = document.getElementById(msg).className
+     const vars = val === "recs" ? "var(--dull)" : "var(--duller)"
+     document.getElementById(msg).style.background = vars
 }
