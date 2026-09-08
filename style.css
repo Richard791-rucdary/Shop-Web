@@ -1,6 +1,8 @@
 :root {
     --norm: antiquewhite;
     --bright: rgb(177, 6, 6);
+    --dull:  rgb(68, 5, 5);
+    --duller: rgb(201, 193, 183);
 }
   
 .hide {
@@ -125,6 +127,8 @@ textarea {
 #debtors {
     position: relative;
     text-align: center;
+    height: 70vh;
+    overflow-y: auto;
 }
 .back {
     background-color: var(--norm);
@@ -197,7 +201,7 @@ textarea {
     font-size: 60px;
     text-align: center;
     position: absolute;
-    transform: translate(50%, 50%);
+    transform: translate(30%, 30%);
 }
 #vevs, #vevs div {
     display: flex;
@@ -221,6 +225,7 @@ width: 150px;
     color: grey;
       width: 190px;
     text-align: right;
+    background: inherit;
 }
 .date-dis {
     width: 100%;
@@ -360,5 +365,14 @@ button:hover {
     top: 70%;
     left: 75%;
     box-shadow: 0 0 10px;
+}
+.ids::before {
+    content: "Debt";
+    opacity: 0.1;
+    position: absolute;
+    font-size: 60px;
+    text-align: center;
+    position: absolute;
+    transform: translate(50%, 50%);
 }
   }
