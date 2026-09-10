@@ -1,6 +1,7 @@
 let users = ""
 let pes = "";
 let myname = "";
+let pers = "";
 let resd = [];
 let rese;
 let msgArr = [];
@@ -102,6 +103,7 @@ try {
      localStorage.setItem("pesinName", res.realName);
     users = user.value
     myname = res.name
+    off()
      loadBack()
 }catch(err) {
     if(err.toString().toLowerCase().includes("failed to fetch")) {
@@ -165,7 +167,8 @@ async function loadData() {
     const ge = sessionStorage.getItem("token");
     let disp = "";
     
-on()
+
+loading("debtors", "80%", "30px", "var(--norm)")
  try {
       const fish = await fetch(`https://shopdb-rb5i.onrender.com/load`, {
         method: "POST",
@@ -179,14 +182,12 @@ on()
       })
    let rest = await fish.json() 
    if(rest.err) {
-     off()
      document.getElementById("debtors").innerHTML = `<b id="error-b">!</b><p><b>${rest.err}</b><br><br><button onclick='loadData()'>Retry</button></p>`
      return false
    }
    rese = rest;
     document.getElementById("name-dis").innerHTML = `Hello ${myname}`;
    if(rese.message === null) {
-    off()
    return document.getElementById("debtors").innerHTML = `<h1 style="color:grey;">No Records</h1>`
    }
    resd.length = 0;
@@ -221,10 +222,9 @@ on()
           total += parseInt(dis.owed);
             }
         })
-    disp+= `<div onclick="viewRecords('${val[0]}')"><span><b>${val[0]}</b></span><span><small style="color: ${total > 0 ? "green" : total < 0 ? "red" : "black"}; background:  rgb(253, 246, 167); border-radius: 10px; border: none; height: 30px; width: 40px; font-weight: bold;">₦${total.toLocaleString().replace("-", "")}</small></span></div>`
+    disp+= dispWars(val[0], total)
   })
   document.getElementById("debtors").innerHTML = disp
-  off()
   return true
 } catch(err){
      if(err.toString().toLowerCase().includes("failed to fetch")) {
@@ -238,8 +238,8 @@ on()
           total += parseInt(dis.owed);
             }
         })
-    disp+= `<div onclick="viewRecords('${val[0]}')"><span><b>${val[0]}</b></span><span><small style="color: ${total > 0 ? "green" : total < 0 ? "red" : "black"}; background:  rgb(253, 246, 167); border-radius: 10px; border: none; height: 30px; width: 40px; font-weight: bold;">₦${total.toLocaleString().replace("-", "")}</small></span></div>`
- })
+    disp+= dispWars(val[0], total) 
+})
   document.getElementById("debtors").innerHTML = disp
   off()
  return
@@ -365,6 +365,7 @@ function viewRecords(val) {
             read.push({rec: dis.record, bal: dis.owed, date: dis.date, id: dis.id, time: dis.actDate})
         }
     })
+    if(read.length === 0) return loadBack();
     view("dis-page")
     document.getElementById("head").innerText = val;
 
@@ -414,15 +415,10 @@ async function del(val) {
     } catch(err) {
     if(err.toString().toLowerCase().includes("failed to fetch")) {
         msgBox("We can't connect to our servers. Please check your internet connection.", "fail")
-    } else if(err.toString().toLowerCase().includes("undefined")) {
-        msgBox("Success", "success")
-        loadBack()
     }else {
 msgBox("An error occured. Please try again.", "fail")
     } 
-    } finally {
     }
-
 }
 }
 
@@ -433,6 +429,7 @@ function addToUser() {
 }
 
     function check() {
+        closers("cancel")
         const val = document.getElementById("search-inp").value;
         let arr = []
         let disp = "";
@@ -449,8 +446,7 @@ function addToUser() {
           total += parseInt(dis.owed);
             }
         })
- disp+= `<div onclick="viewRecords('${ins}')"><span><b><b style="color: var(--bright); font-size: 20px;">${val}</b>${ins.toLowerCase().replace(val.toLowerCase(), "")}</b></span><span><small style="color: ${total > 0 ? "green" : total < 0 ? "red" : "black"}; background:  rgb(253, 246, 167); border-radius: 10px; border: none; height: 30px; width: 40px; font-weight: bold;">₦${total.toLocaleString().replace("-", "")}</small></span></div>`
-
+ disp+= `<div onclick="viewRecords('${ins}')" oncontextmenu="showOs('${ins}')" id="${ins.replace(" ", "-")}"><span><b><b style="color: var(--bright); font-size: 20px;">${val}</b>${ins.toLowerCase().replace(val.toLowerCase(), "")}</b></span><span><small style="color: ${total > 0 ? "green" : total < 0 ? "red" : "black"}; background:  rgb(253, 246, 167); border-radius: 10px; border: none; height: 30px; width: 40px; font-weight: bold;">₦${total.toLocaleString().replace("-", "")}</small></span></div>`
         })
         disp = disp === "" ? "<h1 style=\"color:grey;\">No Match</h1>": disp;
         document.getElementById("debtors").innerHTML = disp;
@@ -565,6 +561,7 @@ msgBox("An error occured. Please try again.", "fail")
           const text = document.getElementById("edit-text").value
             const tot = document.getElementById("edit-tot").value
            try {
+            on()
         const fish = await fetch(`https://shopdb-rb5i.onrender.com/upd`, {
             method: "POST",
             headers: {
@@ -579,12 +576,16 @@ msgBox("An error occured. Please try again.", "fail")
             })
         })
         const reste = await fish.json();
-        if(reste.err) return msgBox(reste.err, "fail")
+        if(reste.err) {
+            off()
+            return msgBox(reste.err, "fail")
+        }
         await loadData()
         viewRecords(pes)
          document.querySelectorAll("#edit-rec input, #edit-rec textarea").forEach(disp => {
         disp.value = "";
       });
+      off()
        return msgBox(reste.message, "success")
     } catch(err) {
     if(err.toString().toLowerCase().includes("failed to fetch")) {
@@ -595,6 +596,7 @@ msgBox("An error occured. Please try again.", "fail")
     }else {
 msgBox("An error occured. Please try again.", "fail")
     } 
+    off()
     }
 }
 
@@ -604,6 +606,7 @@ function showOpt(ide) {
      id = ide
     doStuff(ide)
     }
+
 function closer(value) {
   if(value === "cancel") {
       document.getElementById("vevs").style.display = "none"
@@ -634,4 +637,125 @@ function doStuff(msg) {
      const val = document.getElementById(msg).className
      const vars = val === "recs" ? "var(--dull)" : "var(--duller)"
      document.getElementById(msg).style.background = vars
+}
+
+
+function doStuffe(msg) {
+     document.querySelectorAll("#debtors div").forEach(dis => {
+        dis.style.background = "var(--norm)";
+     })
+     if(msg === "yes") return
+     document.getElementById(msg.replace(" ", "-")).style.background = "var(--duller)"
+}
+
+
+async function delWhole(val) {
+    let con = confirm(`Are you sure you want to delete ${val}'s records?`)
+      const ge = sessionStorage.getItem("token");
+    if(con) {
+        try {
+           const fish = await fetch("https://shopdb-rb5i.onrender.com/masDel", {
+           method: "POST",
+           headers: {
+            "Content-Type": "application/json",
+            "Authorization": ge,
+           },
+           body: JSON.stringify({
+            user: get,
+            name: val
+           })
+           })
+           const resd = await fish.json()
+           if(resd.err) return msgBox(resd.err, "fail")
+            loadData()
+        msgBox("Success", "success")
+        } catch(err) {
+  if(err.toString().toLowerCase().includes("failed to fetch")) {
+        msgBox("We can't connect to our servers. Please check your internet connection.", "fail")
+    }else {
+msgBox("An error occured. Please try again.", "fail")
+    } 
+        }
+    }
+}
+
+function showOs(ide) {
+       document.getElementById("vevse").style.display = "flex"
+     document.getElementById("create-new").style.display = "none"
+     pers = ide
+    doStuffe(ide)
+    }
+    
+function closers(value) {
+  if(value === "cancel") {
+      document.getElementById("vevse").style.display = "none"
+     document.getElementById("create-new").style.display = "block"
+     pers = ""
+   } else if(value === "pen") {
+       document.getElementById("vevse").style.display = "none"
+     document.getElementById("create-new").style.display = "block"
+     dudu()
+   } else if(value === "trash") {
+       document.getElementById("vevse").style.display = "none"
+     document.getElementById("create-new").style.display = "block"
+     delWhole(pers)
+     pers = ""
+   }
+   doStuffe("yes")
+}
+
+function dispWars(names, tot) {
+ return `<div onclick="viewRecords('${names}')" oncontextmenu="showOs('${names}')" id="${names.replace(" ", "-")}"><span><b>${names.substr(0,20)}${names.length > 21 ? "...":""}</b></span><span><small style="color: ${tot > 0 ? "green" : tot < 0 ? "red" : "black"}; background:  rgb(253, 246, 167); border-radius: 10px; border: none; height: 30px; width: 40px; font-weight: bold;">₦${tot.toLocaleString().replace("-", "")}</small></span></div>`
+}
+
+function loading(background, width, height, color) {
+    let disp = ""
+    for(let i = 0; i < 2; i++) {
+     disp += `<div style="width: ${width}; height: ${height}; background: ${color}"><span class="big-one"><span></span></span><span class="small-one"><span></span></span></div>`
+    }
+    document.getElementById(background).innerHTML = disp;
+}
+
+function dudu() {
+    view("edit-nam")
+    document.getElementById("cus-ed-text").value = pers;
+}
+
+async function updatePes() {
+   const getse = sessionStorage.getItem("token")
+            const tot = document.getElementById("cus-ed-text").value
+           try {
+            on()
+        const fish = await fetch(`https://shopdb-rb5i.onrender.com/updNam`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": getse,
+            },
+            body: JSON.stringify({
+                "user": users,
+                "name": tot,
+                "former": pers,
+            })
+        })
+        const reste = await fish.json();
+        if(reste.err){
+            off()
+            return msgBox(reste.err, "fail")
+        } 
+        await loadData()
+    loadBack()
+    off()
+       return msgBox(reste.message, "success")
+    } catch(err) {
+    if(err.toString().toLowerCase().includes("failed to fetch")) {
+        msgBox("We can't connect to our servers. Please check your internet connection.", "fail")
+    } else if(err.toString().toLowerCase().includes("undefined")) {
+        msgBox("Success", "success")
+        loadBack()
+    }else {
+msgBox("An error occured. Please try again.", "fail")
+    } 
+     off()
+    }   
 }
