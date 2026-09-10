@@ -39,6 +39,13 @@
 
     <div id="home" class="hide">
       <div>
+         <div id="vevse">
+      <b onclick="closers('cancel')">❌<br><small>Cancel</small></b>
+      <div id="wide">
+      <b onclick="closers('pen')">🖊<br><small>Edit</small></b>
+      <b onclick="closers('trash')">🗑<br><small>Delete</small></b>
+      </div>
+    </div>
         <h2 id="name-dis">****</h2>
        <div style="text-align: center;"><input type="search" id="search-inp" placeholder="Search for a debtor..." oninput="check()"></div> 
        </div>
@@ -89,6 +96,13 @@
     <p>Total</p>
     <input type="number" id="edit-tot"><br><br>
     <button onclick="updateMsg()">Save changes</button>
+  </div>
+
+  <div id="edit-nam" class="hide">
+    <button class="back" onclick="loadBack()">back</button><br><br>
+    <p>Edit debtor's name</p>
+    <input type="text" id="cus-ed-text" placeholder="edit debtor's name"><br><br>
+    <button onclick="updatePes()">Save</button>
   </div>
     <script src="script.js"></script>
     
